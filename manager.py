@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Union
 from club import Club
 
 
@@ -10,7 +10,7 @@ class Manager():
     trophies: List[str] = field(default_factory=list)
 
 
-    def current_club(self) -> Club|None:
+    def current_club(self) -> Union[Club, None]:
         if len(self.clubs) == 0:
             return None
         else:

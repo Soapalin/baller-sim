@@ -1,0 +1,41 @@
+
+NewSaveScreen .title {
+    color: goldenrod;
+    width: 100%;
+    margin-bottom: 0;
+    content-align: center top;
+    text-style: bold;
+    height: 1fr;
+}
+
+NewSaveScreen  .subtitle {
+    color: goldenrod;
+    width: 100%;
+    content-align: center top;
+    height: 1fr;
+}
+
+NewSaveScreen Input {
+    height: 1fr;
+    margin-bottom: 1;
+}
+
+
+NewSaveScreen SelectionList {
+    color: goldenrod;
+    border: solid goldenrod;
+}
+
+NewSaveScreen #league_select {
+    height: 3fr;
+}
+
+NewSaveScreen #club_select {
+    height: 6fr;
+}
+
+NewSaveScreen Button {
+    width: 100%;
+    height: 1fr;
+    margin-top: 1;
+}

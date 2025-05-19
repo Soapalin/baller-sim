@@ -1,7 +1,9 @@
 from textual.app import App, ComposeResult
-from textual import events
+from textual import events, log, work
 from textual.widgets import Button, Label, Header, Static, Tree
 from new_save_screen import NewSaveScreen
+import baller_database
+from manager_dashboard_screen import ManagerDashboardScreeen
 
 BALLER_SIM_BANNER = r"""
  ____        _ _             ____  _
@@ -61,10 +63,25 @@ class BallerSim(App[str]): # [str] is the type returned at the exit
         yield self.new_save
         yield self.exit_save
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
+    def switch_to_dashboard(self):
+        self.install_screen(ManagerDashboardScreeen, "manager_dashboard")
+        self.push_screen("manager_dashboard")
+
+    @work
+    async def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "new_save":
-            self.install_screen(NewSaveScreen, name="new_save")
-            onboarding_completed = self.push_screen(screen="new_save")
+            # self.install_screen(NewSaveScreen, name="new_save")
+            new_save = await self.push_screen_wait(
+                screen=NewSaveScreen(name="new_save"),
+            )
+
+            if new_save is True:
+                self.switch_to_dashboard()
+
+        if event.button.id == "continue":
+            # baller_database.load_save()
+            self.switch_to_dashboard()
+
         if event.button.id == "exit":
             self.exit(event.button.id)
 

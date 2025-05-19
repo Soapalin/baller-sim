@@ -128,6 +128,17 @@ class ClubPlayerProcessing():
             self.all_leagues.remove(empty_league)
 
 
+    def get_league_by_nationality(self, nationality_list):
+        """
+        Get leagues from nationality (country code)
+        """
+        selected_leagues = []
+        for l in self.all_leagues:
+            if l.nationality in nationality_list:
+                selected_leagues.append(l)
+        return selected_leagues
+
+
 
 if __name__ == "__main__":
     p_processing = ClubPlayerProcessing(player_csv="male_players.csv", club_csv="male_teams.csv")
@@ -141,3 +152,11 @@ if __name__ == "__main__":
             f.write(l.to_full_string())
             # if l.nationality in [ "Spain", "England", "Germany", "France", "Portugal"]:
             #     f.write(l.to_full_string())
+
+
+# processed_db = ClubPlayerProcessing(player_csv="male_players.csv", club_csv="male_teams.csv")
+# processed_db.create_leagues()
+# processed_db.create_players()
+# processed_db.get_mismatch_club()
+# processed_db.cleanup_league()
+# for l in processed_db.all_leagues()
