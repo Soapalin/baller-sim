@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 from club import Club
+from season import Season
 
 @dataclass
 class League:
@@ -8,6 +9,7 @@ class League:
     name: str
     nationality: str
     clubs: List[Club] = field(default_factory=list)
+    seasons: List[Season]
 
     # def _get_league_name(self) -> str:
     #     return self.name

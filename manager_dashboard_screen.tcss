@@ -1,0 +1,14 @@
+
+
+#sidebar {
+    dock: left;
+    width: 25vw;
+    # height: 100%;
+    border-right: solid goldenrod; 
+    color: goldenrod;
+}
+
+ManagerDashboardScreen Button {
+    height: 1fr;
+    color: red;
+}
