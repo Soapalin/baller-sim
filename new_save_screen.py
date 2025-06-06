@@ -22,7 +22,10 @@ class NewSaveScreen(Screen):
         self.baller_title = Static("New Save", classes="title")
         self.baller_subtitle = Static("A football managerial career mode simulation", classes="subtitle")
         self.username_input = Input(placeholder="Manager's name", max_length=30)
-        all_leagues = baller_database.DB.get_league_by_nationality(["France", "England"])
+        # all_leagues = baller_database.ORIGIN.get_league_by_nationality(["France", "England"])
+        all_leagues = []
+        for nationality in ["France", "England"]:
+            all_leagues.extend(baller_database.ORIGIN.get_leagues_by_nationality(nationality))
         all_leagues_tuples = [Selection(l.name, l.id, False) for l in all_leagues]
         self.league_selection = SelectionList[int](
             *all_leagues_tuples,
@@ -39,7 +42,7 @@ class NewSaveScreen(Screen):
         yield self.submit_button
 
     def populate_club_selection(self, league_id) -> None:
-        self.all_clubs = baller_database.DB.get_clubs_by_league_id(league_id)
+        self.all_clubs = baller_database.ORIGIN.get_all_clubs_in_league(league_id)
         all_clubs_tuples = [Selection(c.name, c.id, False) for c in self.all_clubs]
         self.club_selection.add_options(all_clubs_tuples)
 
@@ -56,8 +59,8 @@ class NewSaveScreen(Screen):
             if club is None:
                 self.notify("Please select a club you would like to manage.", severity="error")
 
-            baller_database.create_manager(name=self.username_input.value, club=club)
-            self.dismiss(True)
+            baller_database.init_career(name=self.username_input.value, club=club, league_id=self.current_league_id)
+            self.dismiss(baller_database.CURRENT_MANAGER)
 
     @on(SelectionList.SelectionToggled)
     def update_selected_view(self, selection: SelectionList.SelectionToggled) -> None:
@@ -71,6 +74,7 @@ class NewSaveScreen(Screen):
             selection.selection_list.select(selection.selection)
             self.club_selection.disabled = False
             self.populate_club_selection(selection.selection.value)
+            self.current_league_id = selection.selection.value
         elif selection.selection_list.id == "club_select":
             selection.selection_list.deselect_all()
             selection.selection_list.select(selection.selection)

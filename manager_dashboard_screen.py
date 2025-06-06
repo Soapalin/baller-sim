@@ -3,18 +3,22 @@ from textual.app import ComposeResult
 from textual.widgets import Static, ContentSwitcher, Button
 from textual.containers import Container, Vertical
 import baller_database
+from textual import log, events
 
 class ManagerDashboardScreeen(Screen):
     CSS_PATH = "manager_dashboard_screen.tcss"
     BINDINGS = [("escape", "app.pop_screen", "Pop screen")]
 
-
     def compose(self) -> ComposeResult:
-        # yield Static(f"Manager Dashboard - {baller_database.CURRENT_MANAGER.name}")
+        self.manager = baller_database.CURRENT_MANAGER
+        self.club = baller_database.CURRENT_DB.get_club_by_id(
+            club_id=self.manager.current_club()
+        )
 
         with Vertical(id="sidebar"):
-            yield Static(f"Manager Dashboard - {baller_database.CURRENT_MANAGER.name}")
-            yield Static(f"{baller_database.CURRENT_MANAGER.current_club().name}")
+
+            yield Static(f"Manager Dashboard - {self.manager.name}")
+            yield Static(f"{self.club.name}")
             yield Static("")
             yield Button("Next Game", id="next-game")
             yield Button("Team Management", id="team-management")
@@ -34,7 +38,7 @@ class ManagerDashboardScreeen(Screen):
             yield self.club_content()
             yield self.transfers_content()
             yield self.manager_content()
-        
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.query_one(ContentSwitcher).current = event.button.id
 
@@ -46,47 +50,47 @@ class ManagerDashboardScreeen(Screen):
             Static("Next Game"),
             id="next-game"
         )
-    
+
     def team_management_content(self) -> Container:
         return Container(
             Static("Team Management"),
             id="team-management"
         )
-    
+
     def league_table_content(self) -> Container:
         return Container(
             Static("League Table"),
             id="league-table"
         )
-    
+
     def stats_content(self) -> Container:
         return Container(
             Static("Stats"),
             id="stats"
         )
-    
+
     def club_content(self) -> Container:
         return Container(
             Static("Club"),
             id="club"
         )
-    
+
     def calendar_content(self) -> Container:
         return Container(
             Static("Calendar"),
             id="calendar"
         )
-    
+
     def transfers_content(self) -> Container:
         return Container(
             Static("Transfers"),
             id="transfers"
         )
-    
+
     def manager_content(self) -> Container:
         return Container(
             Static("Manager"),
             id="manager"
         )
-    
-    
+
+

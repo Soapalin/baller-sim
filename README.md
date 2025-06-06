@@ -12,7 +12,7 @@ pip install textual-dev
 Use dev-tools and run app alongside:
 ```
 # App
-textual run --dev baller-sim.py
+textual run --dev baller_sim.py
 
 # Dev Tools
 textual console

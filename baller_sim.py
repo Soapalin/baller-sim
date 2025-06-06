@@ -1,9 +1,10 @@
 from textual.app import App, ComposeResult
 from textual import events, log, work
+from textual.screen import ModalScreen
 from textual.widgets import Button, Label, Header, Static, Tree
 from new_save_screen import NewSaveScreen
-import baller_database
 from manager_dashboard_screen import ManagerDashboardScreeen
+import baller_database
 
 BALLER_SIM_BANNER = r"""
  ____        _ _             ____  _
@@ -25,6 +26,38 @@ COLORS = [
     "teal",
     "aqua",
 ]
+
+
+
+class ChooseSave(ModalScreen):
+    def compose(self) -> ComposeResult:
+        self.all_managers = baller_database.ORIGIN.get_all_managers()
+        for m in self.all_managers:
+            log(m)
+        if len(self.all_managers) == 0:
+            # yield Static("No save found. Please create a new save")
+            self.notify("No save found. Please create a new save")
+            self.app.pop_screen()
+        yield Static("Choose your manager")
+        for m in self.all_managers:
+            current_club_name = baller_database.ORIGIN.get_club_by_id(m.current_club()).name
+            log(current_club_name)
+            yield Button(
+                label=f"{m.name} - {current_club_name} - Season {m.current_season}",
+                id=f"{m.name}_{m.id}"
+            )
+
+    def on_key(self, event: events.Key) -> None:
+        self.app.pop_screen()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        # self.app.pop_screen()
+        manager_id_chosen = event.button.id.split("_")[1]
+        baller_database.load_career(manager_id=manager_id_chosen)
+        self.app.pop_screen() # pop modal before going to dashboard
+        self.app.push_screen(screen=ManagerDashboardScreeen(name="manager_dashboard"))
+
+
 
 class BallerSim(App[str]): # [str] is the type returned at the exit
     CSS_PATH = "baller_sim.tcss"
@@ -63,24 +96,27 @@ class BallerSim(App[str]): # [str] is the type returned at the exit
         yield self.new_save
         yield self.exit_save
 
-    def switch_to_dashboard(self):
+    async def switch_to_dashboard(self):
         self.install_screen(ManagerDashboardScreeen, "manager_dashboard")
-        self.push_screen("manager_dashboard")
+        dashboard = await self.push_screen_wait("manager_dashboard")
+        self.uninstall_screen("manager_dashboard")
+
+    def open_save_modal(self):
+        self.push_screen(ChooseSave())
 
     @work
     async def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "new_save":
-            # self.install_screen(NewSaveScreen, name="new_save")
             new_save = await self.push_screen_wait(
                 screen=NewSaveScreen(name="new_save"),
             )
 
-            if new_save is True:
-                self.switch_to_dashboard()
+            if new_save is not None:
+                dashboard = await self.push_screen_wait(screen=ManagerDashboardScreeen(name="manager_dashboard"))
+                self.uninstall_screen("manager_dashboard")
 
         if event.button.id == "continue":
-            # baller_database.load_save()
-            self.switch_to_dashboard()
+            self.open_save_modal()
 
         if event.button.id == "exit":
             self.exit(event.button.id)

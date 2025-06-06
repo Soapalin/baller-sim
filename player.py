@@ -51,3 +51,52 @@ class Player:
     # match fitness and stats 
     injured: bool = field(default=False)
     # goals_scored: int 
+
+
+    def to_sql_tuples(self) -> tuple:
+        return (
+            self.id,
+            self.name,
+            self.nationality,
+            self.position,
+            self.age,
+            self.overall,
+            self.pace,
+            self.shooting,
+            self.passing,
+            self.dribbling,
+            self.defending,
+            self.physicality,
+            self.accelaration,
+            self.sprint,
+            self.positioning,
+            self.finishing,
+            self.shot,
+            self.long_shot,
+            self.volleys,
+            self.penalties,
+            self.vision,
+            self.crossing,
+            self.free_kick,
+            self.curve,
+            self.agility,
+            self.balance,
+            self.reaction,
+            self.composure,
+            self.interception,
+            self.heading,
+            self.defence,
+            self.standing_tackle,
+            self.sliding_tackle,
+            self.jumping,
+            self.stamina,
+            self.strength,
+            self.aggression,
+            self.attacking_work_rate,
+            self.defensive_work_rate,
+            self.preferred_foot,
+            self.weak_foot,
+            self.skill_move,
+            self.goalkeeping,
+            self.injured
+        )

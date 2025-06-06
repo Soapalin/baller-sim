@@ -12,8 +12,17 @@ class Club:
     defensive_style: str
     build_up_play: str
     chance_creation: str
-    players: List[Player] = field(default_factory=list)
+    players: List[int] = field(default_factory=list)
 
-    def players_to_string(self) -> str:
-        return [p.name for p in self.players]
 
+    def to_sql_tuples(self) -> tuple:
+        return (
+            self.id, 
+            self.name, 
+            self.nationality, 
+            self.stadium, 
+            self.transfer_budget_eur, 
+            self.defensive_style,
+            self.build_up_play,
+            self.chance_creation,
+        )
